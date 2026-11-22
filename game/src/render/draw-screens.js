@@ -59,22 +59,28 @@ export function drawTitle(ctx, attract, time, blink) {
   dim(ctx, 0.62);
   logo(ctx, VIEW_W / 2, 150, 96, time);
   text(ctx, 'a quiet heist in three jobs', VIEW_W / 2, 196, { size: 22, color: COLORS.dim, align: 'center' });
-  panel(ctx, 250, 236, 460, 236);
-  text(ctx, 'HOW TO STEAL', 270, 266, { size: 15, bold: true, color: COLORS.loot });
+  panel(ctx, 250, 228, 460, 262);
+  text(ctx, 'HOW TO STEAL', 270, 256, { size: 15, bold: true, color: COLORS.loot });
   const lines = [
     ['WASD / arrows', 'move'],
     ['hold SHIFT', 'sneak: silent, slower'],
     ['hold E', 'crack the loot case'],
     ['1 2 3 / wheel', 'pick coin, smoke, jammer'],
     ['mouse click', 'throw / use the tool (costs $)'],
+    ['hold Q', 'case the room: guard beats'],
     ['P / ESC', 'pause      M  mute'],
   ];
   lines.forEach(([k, v], i) => {
-    text(ctx, k, 270, 296 + i * 26, { size: 15, bold: true });
-    text(ctx, v, 430, 296 + i * 26, { size: 15, color: COLORS.dim });
+    text(ctx, k, 270, 284 + i * 26, { size: 15, bold: true });
+    text(ctx, v, 430, 284 + i * 26, { size: 15, color: COLORS.dim });
   });
-  text(ctx, 'Teal = safe shadow.  Amber/red = guard sight.  Pink = camera.  Gold = loot.', VIEW_W / 2, 500, { size: 14, color: COLORS.safe, align: 'center' });
-  if (blink) text(ctx, 'PRESS ENTER OR CLICK TO BEGIN THE NIGHT', VIEW_W / 2, 548, { size: 20, bold: true, align: 'center' });
+  text(ctx, 'Teal = safe shadow.  Amber/red = guard sight.  Pink = camera.  Gold = loot.', VIEW_W / 2, 508, { size: 14, color: COLORS.safe, align: 'center' });
+  ctx.fillStyle = COLORS.hud;
+  ctx.fillRect(0, 520, VIEW_W, 80);
+  ctx.fillStyle = COLORS.hudLine;
+  ctx.fillRect(0, 520, VIEW_W, 2);
+  if (blink) text(ctx, 'PRESS ENTER OR CLICK TO BEGIN THE NIGHT', VIEW_W / 2, 556, { size: 20, bold: true, align: 'center' });
+  text(ctx, '3 jobs  ·  guards with flashlights  ·  sweeping cameras  ·  one alarm meter', VIEW_W / 2, 582, { size: 13, color: COLORS.dim, align: 'center' });
 }
 
 export function drawBriefing(ctx, preview, stage, index, total, time) {
@@ -94,7 +100,13 @@ export function drawBriefing(ctx, preview, stage, index, total, time) {
     text(ctx, `${TOOLS[name].label} x${stage.kit[name]}  -$${TOOLS[name].cost}`, x + 18, 386, { size: 15, bold: true });
   });
   text(ctx, `Night so far: ${money(total)}`, 180, 420, { size: 14, color: COLORS.calm });
-  if (Math.sin(time * 4) > -0.3) text(ctx, 'ENTER: go in', 780, 420, { size: 16, bold: true, align: 'right' });
+  ctx.fillStyle = COLORS.hud;
+  ctx.fillRect(0, 520, VIEW_W, 80);
+  ctx.fillStyle = COLORS.hudLine;
+  ctx.fillRect(0, 520, VIEW_W, 2);
+  const pulse = 0.65 + 0.35 * Math.sin(time * 4);
+  text(ctx, 'ENTER or CLICK: go in', VIEW_W / 2, 560, { size: 20, bold: true, align: 'center', color: `rgba(232,236,248,${pulse})` });
+  text(ctx, 'Tip: hold Q in the room to see every guard beat before you move.', VIEW_W / 2, 584, { size: 13, color: COLORS.dim, align: 'center' });
 }
 
 export function drawPause(ctx) {
@@ -149,15 +161,23 @@ function stamp(ctx, word, x, y, color, time) {
 }
 
 export function drawFinal(ctx, results, total, time) {
-  dim(ctx, 0.75);
-  logo(ctx, VIEW_W / 2, 110, 54, time);
-  text(ctx, "THE NIGHT'S TAKE", VIEW_W / 2, 160, { size: 20, bold: true, color: COLORS.dim, align: 'center' });
-  text(ctx, money(total), VIEW_W / 2, 230, { size: 64, bold: true, color: COLORS.loot, align: 'center' });
+  dim(ctx, 0.78);
+  logo(ctx, VIEW_W / 2, 96, 54, time);
+  text(ctx, "THE NIGHT'S TAKE", VIEW_W / 2, 146, { size: 18, bold: true, color: COLORS.dim, align: 'center' });
+  text(ctx, money(total), VIEW_W / 2, 212, { size: 60, bold: true, color: COLORS.loot, align: 'center' });
+  panel(ctx, 150, 240, 660, 60 + results.length * 44);
+  text(ctx, 'JOB', 176, 268, { size: 12, bold: true, color: COLORS.dim });
+  text(ctx, 'TIME', 540, 268, { size: 12, bold: true, color: COLORS.dim, align: 'center' });
+  text(ctx, 'STYLE', 640, 268, { size: 12, bold: true, color: COLORS.dim, align: 'center' });
+  text(ctx, 'TAKE', 784, 268, { size: 12, bold: true, color: COLORS.dim, align: 'right' });
   results.forEach((r, i) => {
-    const y = 300 + i * 40;
-    text(ctx, r.name, 260, y, { size: 18, bold: true });
-    text(ctx, r.rank, 560, y, { size: 18, bold: true, color: r.rank === 'GHOST' ? COLORS.safe : COLORS.warn, align: 'center' });
-    text(ctx, money(r.take), 700, y, { size: 18, bold: true, color: COLORS.loot, align: 'right' });
+    const y = 306 + i * 44;
+    text(ctx, `${i + 1}. ${r.name}`, 176, y, { size: 18, bold: true });
+    text(ctx, r.time === undefined ? '-' : formatTime(r.time), 540, y, { size: 16, align: 'center' });
+    text(ctx, r.rank, 640, y, { size: 16, bold: true, color: r.rank === 'GHOST' || r.rank === 'SHADOW' ? COLORS.safe : COLORS.warn, align: 'center' });
+    text(ctx, money(r.take), 784, y, { size: 18, bold: true, color: COLORS.loot, align: 'right' });
   });
-  text(ctx, 'ENTER: start a new night', VIEW_W / 2, 470, { size: 18, bold: true, align: 'center' });
+  const ghosts = results.filter((r) => r.rank === 'GHOST').length;
+  text(ctx, ghosts === results.length ? 'Not one guard ever saw you. A perfect quiet night.' : `${ghosts} of ${results.length} jobs without a trace.`, VIEW_W / 2, 470, { size: 16, color: COLORS.safe, align: 'center' });
+  if (Math.sin(time * 4) > -0.3) text(ctx, 'ENTER: start a new night', VIEW_W / 2, 500, { size: 18, bold: true, align: 'center' });
 }

@@ -137,3 +137,30 @@ export function drawAlarmVignette(ctx, alarm, time) {
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, VIEW_W, MAP_H);
 }
+
+// One line of advice at the top of the room, from what is happening right now.
+export function hintFor(h) {
+  if (h.thief.nearLoot) return { text: 'Hold E to crack the case', color: COLORS.loot };
+  if (h.thief.carrying && h.time - (h.lootAt ?? h.time) < 6) return { text: 'Loot in the bag: reach the green EXIT', color: COLORS.exit };
+  if (h.guards.some((g) => g.state === 'suspicious')) return { text: '? means suspicious: break line of sight before the gauge fills', color: COLORS.warn };
+  if (h.guards.some((g) => g.state === 'chase')) return { text: 'Chased! Guards are slower than you: lose them round a corner or in shadow', color: COLORS.danger };
+  if (h.stageIndex === 0 && h.time < 16) return { text: 'SHIFT sneaks silently. Teal shadows hide you. Hold Q to case the guard beats.', color: COLORS.safe };
+  return null;
+}
+
+export function drawHint(ctx, h) {
+  if (h.banner || h.outcome) return;
+  const hint = hintFor(h);
+  if (!hint) return;
+  ctx.font = `bold 14px ${FONT}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const w = ctx.measureText(hint.text).width + 28;
+  ctx.fillStyle = 'rgba(8,10,20,0.82)';
+  ctx.fillRect(VIEW_W / 2 - w / 2, 8, w, 26);
+  ctx.strokeStyle = hint.color;
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(VIEW_W / 2 - w / 2 + 0.5, 8.5, w - 1, 25);
+  ctx.fillStyle = hint.color;
+  ctx.fillText(hint.text, VIEW_W / 2, 22);
+}

@@ -17,6 +17,7 @@ const BINDINGS = {
   tool2: ['Digit2'],
   tool3: ['Digit3'],
   mute: ['KeyM'],
+  case: ['KeyQ', 'Tab'],
 };
 
 export function createInput(canvas) {

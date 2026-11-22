@@ -10,7 +10,7 @@ export const MAP_H = ROWS * TILE; // 520: the room; the HUD strip sits below it
 export const HUD_H = VIEW_H - MAP_H;
 
 export const THIEF = {
-  radius: 12,
+  radius: 13,
   walkSpeed: 118,
   sneakSpeed: 62,
   stepNoiseRadius: 105,
@@ -23,11 +23,11 @@ export const GUARD = {
   patrolSpeed: 52,
   searchSpeed: 78,
   chaseSpeed: 108,
-  fov: 0.95, // half-angle in radians
-  range: 215,
+  fov: 0.8, // half-angle in radians
+  range: 200,
   alertRange: 260,
   shadowRange: 58, // how close a guard must be to spot the thief standing in shadow
-  suspicionRise: 1.25, // per second at mid range
+  suspicionRise: 0.6, // per second, scaled up when close
   suspicionFall: 0.45,
   catchDistance: 22,
   searchLinger: 3.2,
@@ -37,7 +37,7 @@ export const GUARD = {
 export const CAMERA = {
   fov: 0.42,
   range: 250,
-  alarmPerSecond: 42,
+  alarmPerSecond: 24,
   jamTime: 7,
 };
 
@@ -57,12 +57,12 @@ export const TOOLS = {
 
 export const COLORS = {
   ink: '#0b0f1a',
-  floor: '#151c2e',
-  floorAlt: '#18203a',
-  grid: 'rgba(120,150,220,0.07)',
-  wall: '#232a40',
-  wallTop: '#2f3854',
-  wallEdge: '#6f82b8',
+  floor: '#2a3452',
+  floorAlt: '#2e3959',
+  grid: 'rgba(150,180,240,0.10)',
+  wall: '#10141f',
+  wallTop: '#1a2030',
+  wallEdge: '#8fa3dc',
   crate: '#6d5238',
   crateTop: '#93714c',
   shadow: '#0a2b2f',

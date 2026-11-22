@@ -5,6 +5,7 @@ import { STAGES } from '../levels/stages.js';
 import { createHeist, stepHeist } from '../heist/heist-session.js';
 import { scoreStage } from '../heist/scoring.js';
 import { drawHeistFrame } from '../render/draw-scene.js';
+import { drawOutro } from '../render/draw-outro.js';
 import { drawTitle, drawBriefing, drawPause, drawResult, drawFinal } from '../render/draw-screens.js';
 import { sfx, playEvents, unlockAudio, toggleMute } from '../audio/sfx.js';
 import { updateAmbience } from '../audio/ambience.js';
@@ -61,16 +62,22 @@ export function updateGameFlow(flow, input, dt) {
       }
       break;
     case 'play': {
+      flow.casing = input.held('case');
       if (input.pressed('pause')) { flow.screen = 'paused'; break; }
       const events = stepHeist(flow.heist, input, dt);
       playEvents(events);
       updateAmbience(dt, flow.heist.alarm.level, true);
       if (flow.heist.outcome) {
         flow.lastScore = scoreStage(flow.heist);
-        flow.screen = 'result';
+        flow.screen = 'outro';
+        flow.outro = 0;
       }
       break;
     }
+    case 'outro':
+      flow.outro += dt;
+      if (flow.outro > 1.7 || (flow.outro > 0.4 && go)) flow.screen = 'result';
+      break;
     case 'paused':
       if (input.pressed('pause')) flow.screen = 'play';
       if (input.pressed('retry')) { flow.heist = createHeist(flow.stageIndex); flow.screen = 'play'; }
@@ -79,7 +86,7 @@ export function updateGameFlow(flow, input, dt) {
       const ok = flow.lastScore.escaped;
       if (ok && input.pressed('confirm')) {
         sfx.confirm();
-        flow.results.push({ name: flow.heist.stage.name, take: flow.lastScore.take, rank: flow.lastScore.rank });
+        flow.results.push({ name: flow.heist.stage.name, take: flow.lastScore.take, rank: flow.lastScore.rank, time: flow.lastScore.time });
         if (flow.stageIndex + 1 < STAGES.length) beginBriefing(flow, flow.stageIndex + 1);
         else flow.screen = 'final';
       } else if (!ok && (input.pressed('retry') || input.pressed('confirm'))) {
@@ -106,7 +113,11 @@ export function drawGameFlow(ctx, flow, mouse) {
       drawBriefing(ctx, flow.preview, STAGES[flow.stageIndex], flow.stageIndex, nightTotal(flow), t);
       break;
     case 'play':
-      drawHeistFrame(ctx, flow.heist, t, mouse);
+      drawHeistFrame(ctx, flow.heist, t, mouse, flow.casing);
+      break;
+    case 'outro':
+      drawHeistFrame(ctx, flow.heist, t, null);
+      drawOutro(ctx, flow.heist, flow.outro / 1.7);
       break;
     case 'paused':
       drawHeistFrame(ctx, flow.heist, t, null);

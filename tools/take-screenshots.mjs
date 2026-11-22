@@ -29,7 +29,7 @@ const server = createServer(async (req, res) => {
 });
 
 const [outDir = 'screenshots', ...scenes] = process.argv.slice(2);
-const DEFAULT = [['1-sneak', 'sneak'], ['2-spotted', 'spotted'], ['3-title', 'title'], ['4-result', 'result']];
+const DEFAULT = [['1-sneak', 'sneak'], ['2-spotted', 'spotted'], ['3-casing', 'casing'], ['4-night', 'night']];
 const jobs = scenes.length ? scenes.map((s) => [s.replace(/[^a-z0-9]+/gi, '-'), s]) : DEFAULT;
 
 mkdirSync(outDir, { recursive: true });

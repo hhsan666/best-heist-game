@@ -71,6 +71,7 @@ export function stepHeist(h, input, dt) {
       if (best) sendToSearch(best.g, h.map, e.x, e.y, 0.5);
     }
     if (e.type === 'spotted') { h.spottedCount++; bumpAlarm(h.alarm, ALARM.noticeBump); h.banner = { text: 'SPOTTED!', age: 0 }; }
+    if (e.type === 'loot') h.lootAt = h.time;
     if (e.type === 'loot') h.banner = { text: 'LOOT SECURED: RUN FOR THE HATCH', age: 0 };
     if (e.type === 'caught') h.outcome = 'caught';
   }

@@ -52,6 +52,36 @@ export function drawShadows(ctx, map, time) {
   }
 }
 
+// One faint SAFE tag per pool of shadow, on its first tile, so cover reads at a glance.
+export function drawShadowTags(ctx, map) {
+  const seen = new Set();
+  ctx.font = 'bold 10px Verdana, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      const k = y * COLS + x;
+      if (seen.has(k) || tileAt(map, x, y) !== SHADOW) continue;
+      const stack = [[x, y]];
+      seen.add(k);
+      let size = 0;
+      while (stack.length) {
+        const [cx, cy] = stack.pop();
+        size++;
+        for (const [nx, ny] of [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]]) {
+          const nk = ny * COLS + nx;
+          if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS || seen.has(nk) || tileAt(map, nx, ny) !== SHADOW) continue;
+          seen.add(nk);
+          stack.push([nx, ny]);
+        }
+      }
+      if (size < 2) continue;
+      ctx.fillStyle = 'rgba(70,230,205,0.75)';
+      ctx.fillText('SAFE', (x + 1) * TILE, y * TILE + 11);
+    }
+  }
+}
+
 export function drawWalls(ctx, map) {
   for (let y = 0; y < ROWS; y++) {
     for (let x = 0; x < COLS; x++) {

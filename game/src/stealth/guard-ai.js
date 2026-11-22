@@ -91,7 +91,7 @@ export function updateGuard(g, ctx) {
     g.lastSeen = { x: thief.x, y: thief.y };
     g.lostFor = 0;
     if (g.state !== 'chase') {
-      g.suspicion += dt * GUARD.suspicionRise * (0.45 + strength * 1.4) * (hot ? 1.6 : 1);
+      g.suspicion += dt * GUARD.suspicionRise * (0.35 + strength * 1.6) * (hot ? 1.5 : 1);
       if (g.state === 'patrol' && g.suspicion > 0.2) { g.state = 'suspicious'; events.push({ type: 'huh', guard: g }); }
       if (g.suspicion >= 1) {
         g.suspicion = 1;
