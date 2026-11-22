@@ -1,5 +1,5 @@
 // One attempt at one stage: builds the room, its guards and cameras, and runs a tick of the
-// heist in order (thief, tools, cameras, guards, alarm), turning what happened into events the
+// heist in order (thief, tools, cameras, lasers, guards, alarm), turning what happened into events the
 // sound and the screens react to.
 
 import { STAGES } from '../levels/stages.js';
@@ -11,6 +11,7 @@ import { createAlarm, beginAlarmFrame, endAlarmFrame, bumpAlarm } from '../steal
 import { createNoiseField, updateNoise, settleNoise } from '../stealth/noise.js';
 import { createKit, createSmokeField, updateSmoke, useTool, TOOL_ORDER } from '../gear/tools.js';
 import { ALARM, TILE } from '../config.js';
+import { createLaser, updateLasers } from '../stealth/laser-grid.js';
 
 export function createHeist(stageIndex) {
   const stage = STAGES[stageIndex];
@@ -22,6 +23,7 @@ export function createHeist(stageIndex) {
     thief: createThief(map.start),
     guards: stage.guards.map(createGuard),
     cameras: stage.cameras.map(createCamera),
+    lasers: (stage.lasers ?? []).map(createLaser),
     alarm: createAlarm(),
     noise: createNoiseField(),
     clouds: createSmokeField(),
@@ -57,12 +59,13 @@ export function stepHeist(h, input, dt) {
   ctx.clouds = h.clouds;
 
   for (const cam of h.cameras) updateCamera(cam, ctx);
+  updateLasers(h.lasers, ctx);
   for (const g of h.guards) updateGuard(g, ctx);
   settleNoise(h.noise);
   updateNoise(h.noise, dt);
 
   for (const e of events) {
-    if (e.type === 'camera') {
+    if (e.type === 'camera' || e.type === 'laser') {
       let best = null;
       for (const g of h.guards) {
         const d = Math.hypot(g.x - e.x, g.y - e.y);
@@ -72,6 +75,7 @@ export function stepHeist(h, input, dt) {
     }
     if (e.type === 'spotted') { h.spottedCount++; bumpAlarm(h.alarm, ALARM.noticeBump); h.banner = { text: 'SPOTTED!', age: 0 }; }
     if (e.type === 'loot') h.lootAt = h.time;
+    if (e.type === 'laser') { h.tripped = (h.tripped ?? 0) + 1; h.banner = { text: 'LASER TRIPPED!', age: 0 }; }
     if (e.type === 'loot') h.banner = { text: 'LOOT SECURED: RUN FOR THE HATCH', age: 0 };
     if (e.type === 'caught') h.outcome = 'caught';
   }

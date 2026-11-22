@@ -79,6 +79,7 @@ export const sfx = {
   escaped: () => [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.5, { type: 'triangle', gain: 0.13, delay: i * 0.09 })),
   caught: () => { tone(220, 0.6, { type: 'sawtooth', gain: 0.16, slide: -140 }); noiseBurst(0.3, { gain: 0.15, freq: 200 }); },
   lockdown: () => { for (let i = 0; i < 4; i++) tone(i % 2 ? 640 : 820, 0.24, { type: 'square', gain: 0.1, delay: i * 0.25 }); },
+  laser: () => { tone(1250, 0.5, { type: 'sawtooth', gain: 0.12, slide: -700 }); tone(1900, 0.15, { type: 'square', gain: 0.06, delay: 0.05 }); },
   select: () => tone(990, 0.05, { type: 'triangle', gain: 0.08 }),
   confirm: () => { tone(660, 0.08, { type: 'triangle', gain: 0.1 }); tone(990, 0.12, { type: 'triangle', gain: 0.1, delay: 0.07 }); },
   siren: (level) => tone(level > 85 ? 900 : 700, 0.2, { type: 'square', gain: 0.035, slide: -200 }),

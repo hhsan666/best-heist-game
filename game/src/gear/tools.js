@@ -1,9 +1,11 @@
 // The thief's kit, each use paid out of the take: a coin to throw as a lure, a smoke pellet that
-// blinds cones, and a jammer that darkens nearby cameras. Aim with the mouse, click to use.
+// blinds cones, and a jammer that darkens nearby cameras and laser beams. Aim with the mouse, click to use.
 
 import { TOOLS } from '../config.js';
 import { emitNoise } from '../stealth/noise.js';
 import { jamCamerasNear } from '../stealth/security-camera.js';
+import { jamLasersNear } from '../stealth/laser-grid.js';
+import { CAMERA } from '../config.js';
 import { clearSight } from '../world/raycast.js';
 import { isSolidAt } from '../world/tilemap.js';
 
@@ -52,7 +54,7 @@ export function useTool(kit, ctx, x, y) {
     ctx.clouds.push({ x, y, r: 0, maxR: tool.radius, age: 0, life: tool.life });
     events.push({ type: 'smoke', x, y });
   } else if (name === 'jammer') {
-    const hit = jamCamerasNear(cameras, x, y, tool.radius);
+    const hit = jamCamerasNear(cameras, x, y, tool.radius) + jamLasersNear(ctx.lasers ?? [], x, y, tool.radius, CAMERA.jamTime);
     events.push({ type: 'jam', x, y, hit });
   }
   return true;

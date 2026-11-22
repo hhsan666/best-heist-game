@@ -5,6 +5,7 @@ import { drawFloor, drawShadows, drawShadowTags, drawWalls, drawLoot, drawExit }
 import { coneShapes, drawCones, drawCameraLocks } from './draw-cones.js';
 import { drawDarkness } from './lighting.js';
 import { drawPatrols, drawCasingLabel } from './draw-patrols.js';
+import { drawLasers } from './draw-lasers.js';
 import { drawThief, drawGuards, drawCameras, drawSmoke, drawNoise, drawReticle } from './draw-actors.js';
 import { drawHud, drawBanner, drawAlarmVignette, drawHint } from './draw-hud.js';
 
@@ -17,6 +18,7 @@ export function drawRoom(ctx, h, time, casing = false) {
   drawCones(ctx, shapes, time);
   drawWalls(ctx, h.map);
   drawShadowTags(ctx, h.map);
+  drawLasers(ctx, h.lasers, time);
   drawExit(ctx, h.map, h.thief, time);
   drawLoot(ctx, h.map, h.thief, time);
   drawNoise(ctx, h.noise);

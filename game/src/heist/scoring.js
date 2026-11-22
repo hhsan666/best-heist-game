@@ -4,7 +4,7 @@
 export function scoreStage(h) {
   const escaped = h.outcome === 'escaped';
   const loot = escaped ? h.stage.loot.value : 0;
-  const heat = h.spottedCount * 150 + Math.round(h.alarm.peak) * 4;
+  const heat = h.spottedCount * 150 + (h.tripped ?? 0) * 100 + Math.round(h.alarm.peak) * 4;
   const speed = escaped ? Math.max(0, Math.round((h.stage.par - h.time) * 10)) : 0;
   const take = escaped ? Math.max(0, loot - h.kit.spent - heat + speed) : 0;
   return {
@@ -23,7 +23,7 @@ export function scoreStage(h) {
 
 export function rankOf(h) {
   if (h.outcome !== 'escaped') return h.outcome === 'caught' ? 'NABBED' : 'LOCKED IN';
-  if (h.spottedCount === 0 && h.alarm.peak < 15) return 'GHOST';
+  if (h.spottedCount === 0 && !h.tripped && h.alarm.peak < 15) return 'GHOST';
   if (h.spottedCount === 0) return 'SHADOW';
   if (h.alarm.peak < 60) return 'PRO';
   return 'LOUD';

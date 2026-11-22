@@ -92,7 +92,7 @@ export function drawBriefing(ctx, preview, stage, index, total, time) {
   text(ctx, stage.brief, 180, 220, { size: 15, color: COLORS.dim });
   text(ctx, 'TARGET', 180, 262, { size: 13, bold: true, color: COLORS.dim });
   text(ctx, `${stage.loot.name}  ${money(stage.loot.value)}`, 180, 286, { size: 20, bold: true, color: COLORS.loot });
-  text(ctx, `Par ${formatTime(stage.par)}   Guards ${stage.guards.length}   Cameras ${stage.cameras.length}`, 180, 318, { size: 15 });
+  text(ctx, `Par ${formatTime(stage.par)}   Guards ${stage.guards.length}   Cameras ${stage.cameras.length}   Lasers ${(stage.lasers ?? []).length}`, 180, 318, { size: 15 });
   text(ctx, 'KIT (each use is paid from the take)', 180, 352, { size: 13, bold: true, color: COLORS.dim });
   TOOL_ORDER.forEach((name, i) => {
     const x = 190 + i * 200;

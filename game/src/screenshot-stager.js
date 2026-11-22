@@ -43,6 +43,7 @@ const SCENES = {
     emitNoise(h.noise, 17.5 * TILE, 10.5 * TILE, 175, 'coin');
     h.noise.ripples[0].age = 0.35;
     h.time = 41;
+    Object.assign(h.lasers[0], { clock: 0.6, live: true, warning: false });
     drawHeistFrame(ctx, h, 2.2, { inside: true, x: 16.6 * TILE, y: 8.4 * TILE });
   },
   spotted(ctx) {
