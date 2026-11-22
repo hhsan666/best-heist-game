@@ -7,11 +7,11 @@ import { drawDarkness } from './lighting.js';
 import { drawPatrols, drawCasingLabel } from './draw-patrols.js';
 import { drawLasers } from './draw-lasers.js';
 import { drawThief, drawGuards, drawCameras, drawSmoke, drawNoise, drawReticle, drawCrawl } from './draw-actors.js';
-import { drawHud, drawBanner, drawAlarmVignette, drawHint } from './draw-hud.js';
+import { drawHud, drawBanner, drawAlarmVignette, drawHint, drawJobIntro } from './draw-hud.js';
 
 export function drawRoom(ctx, h, time, casing = false) {
   const shapes = coneShapes(h);
-  drawFloor(ctx, h.map);
+  drawFloor(ctx, h.map, h.stage.floor);
   drawDarkness(ctx, h, shapes, time);
   drawShadows(ctx, h.map, time);
   drawPatrols(ctx, h, time, casing);
@@ -36,6 +36,7 @@ export function drawHeistFrame(ctx, h, time, mouse, casing = false) {
   drawAlarmVignette(ctx, h.alarm, time);
   if (mouse) drawReticle(ctx, h, mouse);
   drawBanner(ctx, h);
+  if (mouse) drawJobIntro(ctx, h);
   if (casing) drawCasingLabel(ctx);
   else if (mouse) drawHint(ctx, h);
   drawHud(ctx, h, time);

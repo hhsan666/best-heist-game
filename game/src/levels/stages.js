@@ -10,6 +10,7 @@
 export const STAGES = [
   {
     id: 'annex',
+    floor: 'carpet',
     name: 'Orchid Annex',
     brief: 'A sleepy gallery wing. One night watchman, one camera on the vault door.',
     loot: { name: 'Moth Orchid Brooch', value: 1200 },
@@ -40,6 +41,7 @@ export const STAGES = [
   },
   {
     id: 'bonded',
+    floor: 'concrete',
     name: 'Copperline Bonded Store',
     brief: 'Two guards on crossing beats and two cameras. The shadows by the crates are your friends.',
     loot: { name: 'Copperline Bearer Bonds', value: 2600 },
@@ -75,6 +77,7 @@ export const STAGES = [
   },
   {
     id: 'atrium',
+    floor: 'marble',
     name: 'The Lantern Atrium',
     brief: 'The penthouse. Three guards, three cameras, and the Lantern Opal under glass. Plan first.',
     loot: { name: 'The Lantern Opal', value: 4800 },

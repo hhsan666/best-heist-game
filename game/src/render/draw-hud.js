@@ -166,3 +166,22 @@ export function drawHint(ctx, h) {
   ctx.fillStyle = hint.color;
   ctx.fillText(hint.text, VIEW_W / 2, 22);
 }
+
+// The job's name across the room for the first seconds of play.
+export function drawJobIntro(ctx, h) {
+  if (h.time > 2.4) return;
+  const a = Math.min(1, (2.4 - h.time) * 1.5);
+  ctx.save();
+  ctx.globalAlpha = a;
+  ctx.fillStyle = 'rgba(6,8,16,0.7)';
+  ctx.fillRect(0, MAP_H / 2 - 46, VIEW_W, 92);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = COLORS.dim;
+  ctx.font = `bold 14px ${FONT}`;
+  ctx.fillText(`JOB ${h.stageIndex + 1} OF 3  ·  TARGET: ${h.stage.loot.name.toUpperCase()}`, VIEW_W / 2, MAP_H / 2 - 20);
+  ctx.fillStyle = COLORS.text;
+  ctx.font = `bold 34px ${FONT}`;
+  ctx.fillText(h.stage.name, VIEW_W / 2, MAP_H / 2 + 14);
+  ctx.restore();
+}

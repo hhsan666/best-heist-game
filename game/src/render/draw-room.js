@@ -3,16 +3,10 @@
 
 import { TILE, COLS, ROWS, COLORS, THIEF } from '../config.js';
 import { tileAt, WALL, CRATE, SHADOW } from '../world/tilemap.js';
+import { drawThemedFloor } from './floor-themes.js';
 
-export function drawFloor(ctx, map) {
-  for (let y = 0; y < ROWS; y++) {
-    for (let x = 0; x < COLS; x++) {
-      const t = tileAt(map, x, y);
-      if (t === WALL) continue;
-      ctx.fillStyle = (x + y) % 2 ? COLORS.floor : COLORS.floorAlt;
-      ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
-    }
-  }
+export function drawFloor(ctx, map, theme) {
+  drawThemedFloor(ctx, map, theme);
   ctx.strokeStyle = COLORS.grid;
   ctx.lineWidth = 1;
   ctx.beginPath();

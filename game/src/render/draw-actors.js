@@ -17,25 +17,49 @@ export function drawThief(ctx, t, time) {
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.rotate(t.facing);
-  ctx.fillStyle = t.inShadow ? 'rgba(26,29,43,0.75)' : COLORS.thief;
+  const step = t.moving ? Math.sin(t.stridePhase) * 4 : 0;
+  // feet, stepping
+  ctx.fillStyle = '#0b0d16';
   ctx.beginPath();
-  ctx.ellipse(0, 0, THIEF.radius, THIEF.radius - 2, 0, 0, Math.PI * 2);
+  ctx.ellipse(step, -5, 4, 3, 0, 0, Math.PI * 2);
+  ctx.ellipse(-step, 5, 4, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // scarf tail streaming behind
+  ctx.strokeStyle = COLORS.thiefTrim;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(-4, 2);
+  ctx.quadraticCurveTo(-12, 4 + step, -18, 1 - step);
+  ctx.stroke();
+  if (t.carrying) {
+    ctx.fillStyle = COLORS.loot;
+    ctx.beginPath();
+    ctx.arc(-9, 0, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#5a4210';
+    ctx.font = 'bold 9px Verdana, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('$', -9, 0.5);
+  }
+  // shoulders and hood
+  ctx.fillStyle = t.inShadow ? 'rgba(26,29,43,0.8)' : COLORS.thief;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, THIEF.radius - 5, THIEF.radius, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = COLORS.thiefTrim;
   ctx.lineWidth = 2;
   ctx.stroke();
-  // mask band and eyes, facing forward
+  ctx.fillStyle = '#262a3d';
+  ctx.beginPath();
+  ctx.arc(1, 0, 7, 0, Math.PI * 2);
+  ctx.fill();
+  // mask slit and eyes, facing forward
   ctx.fillStyle = COLORS.thiefTrim;
-  ctx.fillRect(2, -6, 5, 12);
+  ctx.fillRect(4, -5, 3, 10);
   ctx.fillStyle = '#ffffff';
-  ctx.fillRect(4, -4, 2, 2);
-  ctx.fillRect(4, 2, 2, 2);
-  if (t.carrying) {
-    ctx.fillStyle = COLORS.loot;
-    ctx.beginPath();
-    ctx.arc(-9, 0, 6, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  ctx.fillRect(5, -3.5, 2, 2);
+  ctx.fillRect(5, 1.5, 2, 2);
   ctx.restore();
   if (t.sneaking && t.moving) {
     ctx.fillStyle = COLORS.safe;
@@ -52,23 +76,44 @@ export function drawGuards(ctx, h) {
     ctx.save();
     ctx.translate(g.x, g.y);
     ctx.rotate(g.facing);
-    // flashlight
-    ctx.fillStyle = '#ffe9a8';
-    ctx.fillRect(GUARD.radius - 3, -3, 8, 6);
+    const step = stride * 2;
+    // boots
+    ctx.fillStyle = '#0b0f1f';
+    ctx.beginPath();
+    ctx.ellipse(step, -6, 5, 3.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(-step, 6, 5, 3.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // arm and flashlight held forward
+    ctx.fillStyle = g.state === 'chase' ? '#7a1f2e' : COLORS.guard;
+    ctx.fillRect(2, 5, 10, 5);
+    ctx.fillStyle = '#c9ccd6';
+    ctx.fillRect(11, 4, 7, 7);
+    ctx.fillStyle = '#fff3c2';
+    ctx.fillRect(17, 5, 3, 5);
+    // shoulders with epaulettes
     ctx.fillStyle = g.state === 'chase' ? '#7a1f2e' : COLORS.guard;
     ctx.beginPath();
-    ctx.ellipse(stride * 0.3, 0, GUARD.radius, GUARD.radius + 1, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 0, GUARD.radius - 5, GUARD.radius + 1, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.strokeStyle = COLORS.guardTrim;
     ctx.lineWidth = 2;
     ctx.stroke();
-    // cap
+    ctx.fillStyle = COLORS.guardTrim;
+    ctx.fillRect(-3, -GUARD.radius + 1, 6, 3);
+    ctx.fillRect(-3, GUARD.radius - 4, 6, 3);
+    // peaked cap, brim forward
     ctx.fillStyle = '#111a3d';
     ctx.beginPath();
-    ctx.arc(1, 0, 7, 0, Math.PI * 2);
+    ctx.arc(0, 0, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#05070f';
+    ctx.beginPath();
+    ctx.ellipse(6, 0, 3.5, 6, 0, -Math.PI / 2, Math.PI / 2);
     ctx.fill();
     ctx.fillStyle = COLORS.guardTrim;
-    ctx.fillRect(6, -4, 3, 8);
+    ctx.beginPath();
+    ctx.arc(1, 0, 2, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
     drawGuardStatus(ctx, g);
   }
