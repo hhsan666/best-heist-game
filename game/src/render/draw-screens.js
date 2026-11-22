@@ -54,7 +54,7 @@ function logo(ctx, x, y, size, time) {
   ctx.fillRect(x - w / 2, y + 10, w, 3);
 }
 
-export function drawTitle(ctx, attract, time, blink) {
+export function drawTitle(ctx, attract, time, blink, best = 0) {
   drawRoom(ctx, attract, time);
   dim(ctx, 0.62);
   logo(ctx, VIEW_W / 2, 150, 96, time);
@@ -80,7 +80,7 @@ export function drawTitle(ctx, attract, time, blink) {
   ctx.fillStyle = COLORS.hudLine;
   ctx.fillRect(0, 520, VIEW_W, 2);
   if (blink) text(ctx, 'PRESS ENTER OR CLICK TO BEGIN THE NIGHT', VIEW_W / 2, 556, { size: 20, bold: true, align: 'center' });
-  text(ctx, '3 jobs  ·  guards with flashlights  ·  sweeping cameras  ·  one alarm meter', VIEW_W / 2, 582, { size: 13, color: COLORS.dim, align: 'center' });
+  text(ctx, best > 0 ? `Best night so far: ${money(best)}` : '3 jobs  ·  guards with flashlights  ·  sweeping cameras  ·  lasers  ·  one alarm meter', VIEW_W / 2, 582, { size: 13, color: best > 0 ? COLORS.loot : COLORS.dim, align: 'center' });
 }
 
 export function drawBriefing(ctx, preview, stage, index, total, time) {

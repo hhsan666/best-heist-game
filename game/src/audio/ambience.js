@@ -44,3 +44,29 @@ export function updateAmbience(dt, tension, playing) {
     if (sirenTimer <= 0) { sfx.siren(tension); sirenTimer = 0.9; }
   }
 }
+
+const stepTimers = new Map();
+let heartTimer = 0;
+
+// Close-quarters sound: a heartbeat that quickens as any guard's suspicion climbs, and the
+// footfalls of guards near the thief, louder the closer they walk.
+export function updateTension(dt, h) {
+  if (!audioContext() || !h.thief.active) return;
+  const worry = Math.max(0, ...h.guards.map((g) => (g.state === 'chase' ? 1 : g.suspicion)));
+  if (worry > 0.12) {
+    heartTimer -= dt;
+    if (heartTimer <= 0) {
+      sfx.heartbeat(0.05 + worry * 0.12);
+      heartTimer = 0.95 - worry * 0.5;
+    }
+  }
+  for (const g of h.guards) {
+    const d = Math.hypot(g.x - h.thief.x, g.y - h.thief.y);
+    if (d > 280 || g.pause > 0 || g.state === 'suspicious') continue;
+    const t = (stepTimers.get(g) ?? 0) - dt;
+    if (t <= 0) {
+      sfx.guardStep(0.13 * (1 - d / 280));
+      stepTimers.set(g, g.state === 'chase' ? 0.26 : 0.5);
+    } else stepTimers.set(g, t);
+  }
+}

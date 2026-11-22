@@ -8,7 +8,8 @@ import { drawHeistFrame } from '../render/draw-scene.js';
 import { drawOutro } from '../render/draw-outro.js';
 import { drawTitle, drawBriefing, drawPause, drawResult, drawFinal } from '../render/draw-screens.js';
 import { sfx, playEvents, unlockAudio, toggleMute } from '../audio/sfx.js';
-import { updateAmbience } from '../audio/ambience.js';
+import { updateAmbience, updateTension } from '../audio/ambience.js';
+import { loadBestNight, saveBestNight } from './save-data.js';
 
 export const IDLE_INPUT = { held: () => false, pressed: () => false, mouse: { clicked: false, x: 0, y: 0, inside: false } };
 
@@ -22,6 +23,8 @@ export function createGameFlow() {
     results: [],
     lastScore: null,
     time: 0,
+    shake: 0,
+    best: loadBestNight(),
   };
 }
 
@@ -44,6 +47,7 @@ function beginBriefing(flow, index) {
 
 export function updateGameFlow(flow, input, dt) {
   flow.time += dt;
+  flow.shake = Math.max(0, flow.shake - dt);
   const go = input.pressed('confirm') || input.mouse.clicked;
   if (go || input.pressed('mute')) unlockAudio();
   if (input.pressed('mute')) toggleMute();
@@ -67,6 +71,8 @@ export function updateGameFlow(flow, input, dt) {
       const events = stepHeist(flow.heist, input, dt);
       playEvents(events);
       updateAmbience(dt, flow.heist.alarm.level, true);
+      updateTension(dt, flow.heist);
+      if (events.some((e) => e.type === 'spotted' || e.type === 'laser' || e.type === 'caught' || e.type === 'lockdown')) flow.shake = 0.35;
       if (flow.heist.outcome) {
         flow.lastScore = scoreStage(flow.heist);
         flow.screen = 'outro';
@@ -88,7 +94,11 @@ export function updateGameFlow(flow, input, dt) {
         sfx.confirm();
         flow.results.push({ name: flow.heist.stage.name, take: flow.lastScore.take, rank: flow.lastScore.rank, time: flow.lastScore.time });
         if (flow.stageIndex + 1 < STAGES.length) beginBriefing(flow, flow.stageIndex + 1);
-        else flow.screen = 'final';
+        else {
+          flow.screen = 'final';
+          flow.best = Math.max(flow.best, nightTotal(flow));
+          saveBestNight(flow.best);
+        }
       } else if (!ok && (input.pressed('retry') || input.pressed('confirm'))) {
         sfx.confirm();
         flow.heist = createHeist(flow.stageIndex);
@@ -103,20 +113,30 @@ export function updateGameFlow(flow, input, dt) {
   }
 }
 
+// A short jolt of the whole room when something goes wrong.
+function shaken(ctx, flow, draw) {
+  if (flow.shake <= 0) { draw(); return; }
+  const k = flow.shake * 14;
+  ctx.save();
+  ctx.translate(Math.sin(flow.time * 91) * k, Math.cos(flow.time * 77) * k);
+  draw();
+  ctx.restore();
+}
+
 export function drawGameFlow(ctx, flow, mouse) {
   const t = flow.time;
   switch (flow.screen) {
     case 'title':
-      drawTitle(ctx, flow.attract, t, Math.sin(t * 4) > -0.3);
+      drawTitle(ctx, flow.attract, t, Math.sin(t * 4) > -0.3, flow.best);
       break;
     case 'briefing':
       drawBriefing(ctx, flow.preview, STAGES[flow.stageIndex], flow.stageIndex, nightTotal(flow), t);
       break;
     case 'play':
-      drawHeistFrame(ctx, flow.heist, t, mouse, flow.casing);
+      shaken(ctx, flow, () => drawHeistFrame(ctx, flow.heist, t, mouse, flow.casing));
       break;
     case 'outro':
-      drawHeistFrame(ctx, flow.heist, t, null);
+      shaken(ctx, flow, () => drawHeistFrame(ctx, flow.heist, t, null));
       drawOutro(ctx, flow.heist, flow.outro / 1.7);
       break;
     case 'paused':
