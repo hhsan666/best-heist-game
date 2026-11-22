@@ -4,7 +4,7 @@
 [![rank](https://make.fun/badge/best-heist-game-20261122-0559/hhsan666/best-heist-game/rank.svg)](https://make.fun/bounty/best-heist-game-20261122-0559/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=best-heist-game-20261122-0559)
 [![reward](https://make.fun/badge/best-heist-game-20261122-0559/hhsan666/best-heist-game/reward.svg)](https://make.fun/bounty/best-heist-game-20261122-0559?utm_source=github&utm_medium=readme&utm_campaign=best-heist-game-20261122-0559)
 
-HUSHLINE: a top-down stealth heist for the browser. Read guard vision cones and sweeping cameras, sneak through shadows, spend coins, smoke and jammers from your take, crack the loot case and reach the hatch before the alarm meter hits lockdown.
+HUSHLINE: a top-down stealth heist for the browser. Read guard vision cones and sweeping cameras, hide in shadows, pay for coins, smoke and jammers, crack the loot and escape before the alarm hits lockdown.
 
 Three jobs in one night (Orchid Annex, Copperline Bonded Store, The Lantern Atrium), each a room with several routes to the loot. Guards walk their beats and grow suspicious before they chase; cameras sweep and fill the alarm; teal shadow pools hide you unless a guard is right beside you. Every tool you use is paid out of the take, so the best heist is the one you planned.
 
