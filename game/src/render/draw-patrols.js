@@ -64,7 +64,7 @@ export function drawCasingLabel(ctx) {
   ctx.font = 'bold 14px Verdana, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  const msg = 'CASING THE ROOM: dotted lines are guard beats, pink arcs are camera sweeps';
+  const msg = 'CASING THE ROOM: yellow = guard beats, pink = camera sweeps, teal = vents';
   const w = ctx.measureText(msg).width + 28;
   ctx.fillStyle = 'rgba(8,10,20,0.85)';
   ctx.fillRect(480 - w / 2, 8, w, 26);

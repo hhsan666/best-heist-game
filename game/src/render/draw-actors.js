@@ -176,3 +176,24 @@ export function drawReticle(ctx, h, mouse) {
   ctx.textAlign = 'left';
   ctx.fillText(check.ok ? `${tool.label} -$${tool.cost}` : check.why, mouse.x + 14, mouse.y - 10);
 }
+
+// A thief inside a vent: a teal pip creeping along the duct between the two grates.
+export function drawCrawl(ctx, thief, time) {
+  const c = thief.crawl;
+  if (!c) return;
+  const k = Math.min(1, c.t / 1.4);
+  ctx.strokeStyle = 'rgba(70,230,205,0.5)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([2, 6]);
+  ctx.beginPath();
+  ctx.moveTo(c.from.x, c.from.y);
+  ctx.lineTo(c.to.x, c.to.y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  const x = c.from.x + (c.to.x - c.from.x) * k;
+  const y = c.from.y + (c.to.y - c.from.y) * k;
+  ctx.fillStyle = COLORS.safe;
+  ctx.beginPath();
+  ctx.arc(x, y, 5 + Math.sin(time * 20) * 1.5, 0, Math.PI * 2);
+  ctx.fill();
+}

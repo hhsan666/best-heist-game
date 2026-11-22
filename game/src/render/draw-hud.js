@@ -141,6 +141,8 @@ export function drawAlarmVignette(ctx, alarm, time) {
 // One line of advice at the top of the room, from what is happening right now.
 export function hintFor(h) {
   if (h.thief.nearLoot) return { text: 'Hold E to crack the case', color: COLORS.loot };
+  if (h.thief.crawl) return { text: 'Crawling through the vent: nobody can see you', color: COLORS.safe };
+  if (h.thief.onVent) return { text: 'Press E to crawl through the vent', color: COLORS.safe };
   if (h.thief.carrying && h.time - (h.lootAt ?? h.time) < 6) return { text: 'Loot in the bag: reach the green EXIT', color: COLORS.exit };
   if (h.guards.some((g) => g.state === 'suspicious')) return { text: '? means suspicious: break line of sight before the gauge fills', color: COLORS.warn };
   if (h.guards.some((g) => g.state === 'chase')) return { text: 'Chased! Guards are slower than you: lose them round a corner or in shadow', color: COLORS.danger };

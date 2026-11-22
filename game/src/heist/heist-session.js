@@ -12,6 +12,7 @@ import { createNoiseField, updateNoise, settleNoise } from '../stealth/noise.js'
 import { createKit, createSmokeField, updateSmoke, useTool, TOOL_ORDER } from '../gear/tools.js';
 import { ALARM, TILE } from '../config.js';
 import { createLaser, updateLasers } from '../stealth/laser-grid.js';
+import { createVents, ventUnder, startCrawl, updateCrawl } from '../world/vents.js';
 
 export function createHeist(stageIndex) {
   const stage = STAGES[stageIndex];
@@ -24,6 +25,7 @@ export function createHeist(stageIndex) {
     guards: stage.guards.map(createGuard),
     cameras: stage.cameras.map(createCamera),
     lasers: (stage.lasers ?? []).map(createLaser),
+    vents: createVents(stage.vents),
     alarm: createAlarm(),
     noise: createNoiseField(),
     clouds: createSmokeField(),
@@ -52,9 +54,18 @@ export function stepHeist(h, input, dt) {
   h.time += dt;
   beginAlarmFrame(h.alarm);
 
-  updateThief(h.thief, ctx);
-  selectTool(h, input);
-  if (input.mouse.clicked && input.mouse.y < 520) useTool(h.kit, ctx, input.mouse.x, input.mouse.y);
+  if (h.thief.crawl) {
+    if (updateCrawl(h.thief, dt)) events.push({ type: 'ventOut' });
+  } else {
+    updateThief(h.thief, ctx);
+    selectTool(h, input);
+    const vent = h.thief.active ? ventUnder(h.vents, h.thief.x, h.thief.y) : null;
+    h.thief.onVent = Boolean(vent) && !h.thief.nearLoot;
+    if (h.thief.onVent && input.pressed('use')) {
+      startCrawl(h.thief, vent);
+      events.push({ type: 'ventIn' });
+    } else if (input.mouse.clicked && input.mouse.y < 520) useTool(h.kit, ctx, input.mouse.x, input.mouse.y);
+  }
   h.clouds = updateSmoke(h.clouds, dt);
   ctx.clouds = h.clouds;
 

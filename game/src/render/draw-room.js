@@ -213,3 +213,33 @@ export function label(ctx, text, x, y, color) {
   ctx.fillStyle = color;
   ctx.fillText(text, x, y + 1);
 }
+
+// Vent grates: teal slatted squares, a safe way through. While casing the room, a dotted line
+// shows which grates are joined.
+export function drawVents(ctx, vents, casing) {
+  for (const v of vents) {
+    if (casing) {
+      ctx.strokeStyle = 'rgba(70,230,205,0.7)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([2, 6]);
+      ctx.beginPath();
+      ctx.moveTo(v.a.x, v.a.y);
+      ctx.lineTo(v.b.x, v.b.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    for (const end of [v.a, v.b]) {
+      ctx.fillStyle = '#0d2326';
+      ctx.fillRect(end.x - 14, end.y - 14, 28, 28);
+      ctx.strokeStyle = COLORS.safe;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(end.x - 14, end.y - 14, 28, 28);
+      ctx.beginPath();
+      for (let k = -8; k <= 8; k += 4) { ctx.moveTo(end.x - 10, end.y + k); ctx.lineTo(end.x + 10, end.y + k); }
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+    label(ctx, 'VENT', v.a.x, v.a.y - 24, COLORS.safe);
+    label(ctx, 'VENT', v.b.x, v.b.y - 24, COLORS.safe);
+  }
+}

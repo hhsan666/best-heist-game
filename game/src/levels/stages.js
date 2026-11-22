@@ -4,7 +4,8 @@
 //   P  thief start   $  the loot target         X  the getaway hatch
 // Guards walk their `route` (tile coordinates) in a loop; cameras sweep `sweep` radians either
 // side of `angle` at `speed` radians a second; lasers run between two wall points, live for
-// `on` seconds then dark for `off`. Each stage has two or more routes to the loot.
+// `on` seconds then dark for `off`; vents join two floor tiles [ax, ay, bx, by] by a crawlway.
+// Each stage has two or more routes to the loot.
 
 export const STAGES = [
   {
@@ -35,6 +36,7 @@ export const STAGES = [
     cameras: [
       { x: 15.5, y: 9.05, angle: Math.PI / 2, sweep: 0.85, speed: 0.7 },
     ],
+    vents: [[5, 11, 20, 5]],
   },
   {
     id: 'bonded',
@@ -69,6 +71,7 @@ export const STAGES = [
     lasers: [
       { from: [21, 8.5], to: [23, 8.5], on: 2.4, off: 1.8 },
     ],
+    vents: [[1, 5, 21, 5]],
   },
   {
     id: 'atrium',
@@ -106,5 +109,6 @@ export const STAGES = [
       { from: [21.5, 10], to: [21.5, 12], on: 2.0, off: 1.6 },
       { from: [11.5, 10], to: [11.5, 12], on: 1.8, off: 2.2, phase: 1.0 },
     ],
+    vents: [[19, 1, 14, 7]],
   },
 ];
